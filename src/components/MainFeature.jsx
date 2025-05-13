@@ -209,7 +209,9 @@ const MainFeature = () => {
           groundImageRef.current.complete && 
           groundImageRef.current.naturalHeight !== 0 && 
           !groundImageRef.current.error) {
-        try {
+        try {        
+          // Draw the ground image at the bottom of the canvas
+          // The height is fixed at 80 pixels
           ctx.drawImage(groundImageRef.current, 0, canvas.height - 80, canvas.width, 80);
         } catch (err) {
           console.error("Error drawing ground:", err);
