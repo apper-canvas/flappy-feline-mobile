@@ -262,11 +262,13 @@ const MainFeature = () => {
       ctx.strokeStyle = 'black';
       ctx.save();
       try {
-      ctx.lineWidth = 5;
-      ctx.font = '30px "Press Start 2P"';
-      ctx.textAlign = 'center';
-      ctx.strokeText(gameState.score.toString(), canvas.width / 2, 50);
-      ctx.fillText(gameState.score.toString(), canvas.width / 2, 50);
+        ctx.lineWidth = 5;
+        ctx.font = '30px "Press Start 2P"';
+        ctx.textAlign = 'center';
+        ctx.strokeText(gameState.score.toString(), canvas.width / 2, 50);
+        ctx.fillText(gameState.score.toString(), canvas.width / 2, 50);
+      } catch (err) {
+        console.error("Error drawing score:", err);
       
       // Draw lives
       if (catImageRef.current && 
