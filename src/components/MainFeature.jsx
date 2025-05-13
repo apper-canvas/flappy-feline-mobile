@@ -97,6 +97,7 @@ const MainFeature = () => {
       
       // Set src after adding event listeners
       img.ref.current.src = img.src;
+    }); 
     });
     
     // Initialize canvas
@@ -131,7 +132,7 @@ const MainFeature = () => {
       
       // Draw background
         ctx.drawImage(skyImageRef.current, 0, 0, canvas.width, canvas.height);
-      }
+      
       
       // Only update game if it's active and not paused
       if (gameState.isActive && !gameState.isPaused && !gameState.isOver) {
