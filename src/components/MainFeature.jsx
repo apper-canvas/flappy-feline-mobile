@@ -93,13 +93,13 @@ const MainFeature = () => {
       img.ref.current.onerror = () => {
         console.error(`Failed to load image: ${img.src.substring(0, 30)}...`);
         setLoadingError(true);
-
+      };
       
       // Set src after adding event listeners
       img.ref.current.src = img.src;
-      });
-      
-    
+    });
+  
+  
     });
     
     // Initialize canvas
