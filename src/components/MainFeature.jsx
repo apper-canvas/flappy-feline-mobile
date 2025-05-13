@@ -383,7 +383,7 @@ const MainFeature = () => {
           isOver: true,
           highScore: newHighScore
         }
-        };
+        },
       });
       
       toast.error("Game Over!", {
