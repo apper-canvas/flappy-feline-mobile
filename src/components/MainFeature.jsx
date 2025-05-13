@@ -98,9 +98,6 @@ const MainFeature = () => {
       // Set src after adding event listeners
       img.ref.current.src = img.src;
     });
-  
-  
-    });
     
     // Initialize canvas
     const canvas = canvasRef.current;
