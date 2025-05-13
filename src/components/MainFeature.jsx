@@ -179,6 +179,7 @@ const MainFeature = () => {
       
       // Draw pipes
         // Only draw if images are properly loaded
+      pipes.forEach(pipe => {
         if (pipeTopImageRef.current && pipeTopImageRef.current.complete && pipeTopImageRef.current.naturalHeight !== 0 &&
             pipeBottomImageRef.current && pipeBottomImageRef.current.complete && pipeBottomImageRef.current.naturalHeight !== 0) {
           // Draw top pipe (flipped)
@@ -191,7 +192,7 @@ const MainFeature = () => {
           // Draw bottom pipe
           ctx.drawImage(pipeBottomImageRef.current, pipe.x, pipe.topHeight + PIPE_GAP, PIPE_WIDTH, canvas.height - pipe.topHeight - PIPE_GAP);
         }
-        ctx.drawImage(pipeBottomImageRef.current, pipe.x, pipe.topHeight + PIPE_GAP, PIPE_WIDTH, canvas.height - pipe.topHeight - PIPE_GAP);
+      
       });
       
       if (catImageRef.current && catImageRef.current.complete && catImageRef.current.naturalHeight !== 0) {
