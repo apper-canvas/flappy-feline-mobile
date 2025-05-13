@@ -23,6 +23,7 @@ const CAT_HEIGHT = 40;
 
 const MainFeature = () => {
   const canvasRef = useRef(null);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const catImageRef = useRef(null);
   const skyImageRef = useRef(null);
   const groundImageRef = useRef(null);
@@ -46,8 +47,9 @@ const MainFeature = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [livesLeft, setLivesLeft] = useState(3);
-  
-  // Game tick
+  const [loadingError, setLoadingError] = useState(false);
+
+  // Load images before starting the game
   useEffect(() => {
     const images = [
       { ref: catImageRef, src: "https://pixabay.com/get/g5f6c93bb1a9033fb36dafb4fa8e0c09e56dd3dd6fbecd0c1f38c84e2bc70e0e9f78c4abfca2ea95b68b7a97878c2b8eb_640.png" },
@@ -57,12 +59,42 @@ const MainFeature = () => {
       { ref: pipeBottomImageRef, src: "https://burst.shopifycdn.com/photos/green-plant-in-small-pot.jpg?width=1000&format=pjpg&exif=0&iptc=0" }
     ];
     
+    let loadedCount = 0;
+    const totalImages = images.length;
+    
     // Preload all images
     images.forEach(img => {
       img.ref.current = new Image();
+      
+      // Add load event listener
+      img.ref.current.onload = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setImagesLoaded(true);
+        }
+      };
+      
+      // Add error event listener
+      img.ref.current.onerror = () => {
+        console.error(`Failed to load image: ${img.src}`);
+        setLoadingError(true);
+      };
+      
+      // Set src after adding event listeners
       img.ref.current.src = img.src;
     });
     
+    // Initialize canvas
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#87CEEB'; // Sky blue background while loading
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  }, []);
+  
+  // Game tick
+  useEffect(() => {
     // Initialize canvas
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -72,9 +104,18 @@ const MainFeature = () => {
     const render = () => {
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // If images aren't loaded yet, show loading screen
+      if (!imagesLoaded) {
+        drawLoadingScreen(ctx, canvas);
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
       
       // Draw background
-      ctx.drawImage(skyImageRef.current, 0, 0, canvas.width, canvas.height);
+      if (skyImageRef.current && skyImageRef.current.complete && skyImageRef.current.naturalHeight !== 0) {
+        ctx.drawImage(skyImageRef.current, 0, 0, canvas.width, canvas.height);
+      }
       
       // Only update game if it's active and not paused
       if (gameState.isActive && !gameState.isPaused && !gameState.isOver) {
@@ -129,32 +170,41 @@ const MainFeature = () => {
           }
         });
       }
+      // Only draw if image is properly loaded
       
-      // Draw ground
+      if (groundImageRef.current && groundImageRef.current.complete && groundImageRef.current.naturalHeight !== 0) {
+        ctx.drawImage(groundImageRef.current, 0, canvas.height - 80, canvas.width, 80);
+      }
       ctx.drawImage(groundImageRef.current, 0, canvas.height - 80, canvas.width, 80);
       
       // Draw pipes
-      pipes.forEach(pipe => {
-        // Draw top pipe (flipped)
-        ctx.save();
-        ctx.translate(pipe.x + PIPE_WIDTH / 2, pipe.topHeight);
-        ctx.scale(1, -1);
-        ctx.drawImage(pipeTopImageRef.current, -PIPE_WIDTH / 2, 0, PIPE_WIDTH, 320);
-        ctx.restore();
-        
-        // Draw bottom pipe
+        // Only draw if images are properly loaded
+        if (pipeTopImageRef.current && pipeTopImageRef.current.complete && pipeTopImageRef.current.naturalHeight !== 0 &&
+            pipeBottomImageRef.current && pipeBottomImageRef.current.complete && pipeBottomImageRef.current.naturalHeight !== 0) {
+          // Draw top pipe (flipped)
+          ctx.save();
+          ctx.translate(pipe.x + PIPE_WIDTH / 2, pipe.topHeight);
+          ctx.scale(1, -1);
+          ctx.drawImage(pipeTopImageRef.current, -PIPE_WIDTH / 2, 0, PIPE_WIDTH, 320);
+          ctx.restore();
+          
+          // Draw bottom pipe
+          ctx.drawImage(pipeBottomImageRef.current, pipe.x, pipe.topHeight + PIPE_GAP, PIPE_WIDTH, canvas.height - pipe.topHeight - PIPE_GAP);
+        }
         ctx.drawImage(pipeBottomImageRef.current, pipe.x, pipe.topHeight + PIPE_GAP, PIPE_WIDTH, canvas.height - pipe.topHeight - PIPE_GAP);
       });
       
-      // Draw cat
-      ctx.save();
-      ctx.translate(100, cat.y);
-      
-      // Rotate cat based on velocity
-      const rotation = Math.min(Math.max(cat.velocity * 0.08, -0.5), 0.5);
-      ctx.rotate(rotation);
-      
-      ctx.drawImage(catImageRef.current, -CAT_WIDTH / 2, -CAT_HEIGHT / 2, CAT_WIDTH, CAT_HEIGHT);
+      if (catImageRef.current && catImageRef.current.complete && catImageRef.current.naturalHeight !== 0) {
+        ctx.save();
+        ctx.translate(100, cat.y);
+        
+        // Rotate cat based on velocity
+        const rotation = Math.min(Math.max(cat.velocity * 0.08, -0.5), 0.5);
+        ctx.rotate(rotation);
+        
+        ctx.drawImage(catImageRef.current, -CAT_WIDTH / 2, -CAT_HEIGHT / 2, CAT_WIDTH, CAT_HEIGHT);
+        ctx.restore();
+      }
       ctx.restore();
       
       // Draw score
@@ -167,8 +217,10 @@ const MainFeature = () => {
       ctx.fillText(gameState.score.toString(), canvas.width / 2, 50);
       
       // Draw lives
-      for (let i = 0; i < livesLeft; i++) {
-        ctx.drawImage(catImageRef.current, 20 + i * 30, 20, 25, 20);
+      if (catImageRef.current && catImageRef.current.complete && catImageRef.current.naturalHeight !== 0) {
+        for (let i = 0; i < livesLeft; i++) {
+          ctx.drawImage(catImageRef.current, 20 + i * 30, 20, 25, 20);
+        }
       }
       
       animationFrameId = requestAnimationFrame(render);
@@ -179,7 +231,22 @@ const MainFeature = () => {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [gameState.isActive, gameState.isPaused, gameState.isOver, cat, pipes, livesLeft, soundEnabled]);
+  }, [gameState.isActive, gameState.isPaused, gameState.isOver, cat, pipes, livesLeft, soundEnabled, imagesLoaded]);
+  
+  // Draw loading screen
+  const drawLoadingScreen = (ctx, canvas) => {
+    // Fill background
+    ctx.fillStyle = '#87CEEB'; // Sky blue
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw loading text
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 5;
+    ctx.font = '20px "Press Start 2P"';
+    ctx.textAlign = 'center';
+    ctx.fillText(loadingError ? "Error loading images!" : "Loading...", canvas.width / 2, canvas.height / 2);
+  };
   
   const checkCollisions = () => {
     const canvas = canvasRef.current;
@@ -254,6 +321,9 @@ const MainFeature = () => {
   
   const jump = () => {
     if (!gameState.isActive) {
+      if (!imagesLoaded) {
+        return; // Don't start game if images aren't loaded
+      }
       startGame();
       return;
     }
@@ -272,6 +342,10 @@ const MainFeature = () => {
   };
   
   const startGame = () => {
+    if (!imagesLoaded) {
+      return; // Don't start game if images aren't loaded
+    }
+    
     setGameState({
       isActive: true,
       isOver: false,
@@ -373,6 +447,16 @@ const MainFeature = () => {
       
       {/* Game Canvas */}
       <div className="game-container aspect-[16/9] overflow-hidden shadow-lg mb-4 mx-auto">
+        {!imagesLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-surface-800/50 z-10">
+            <div className="text-center p-4 bg-surface-100 dark:bg-surface-700 rounded-lg shadow-lg">
+              <div className="animate-spin h-10 w-10 border-4 border-accent border-t-transparent rounded-full mb-4 mx-auto"></div>
+              <p className="font-game text-surface-800 dark:text-surface-200">
+                {loadingError ? "Error loading game assets!" : "Loading game..."}
+              </p>
+            </div>
+          </div>
+        )}
         <canvas
           ref={canvasRef}
           width={480}
@@ -396,7 +480,7 @@ const MainFeature = () => {
         </div>
         
         <div className="flex space-x-3">
-          {!gameState.isActive && !gameState.isOver && (
+          {!gameState.isActive && !gameState.isOver && imagesLoaded && (
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={startGame}
