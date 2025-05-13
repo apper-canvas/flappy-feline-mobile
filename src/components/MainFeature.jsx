@@ -52,11 +52,26 @@ const MainFeature = () => {
   // Load images before starting the game
   useEffect(() => {
     const images = [
-      { ref: catImageRef, src: "https://pixabay.com/get/g5f6c93bb1a9033fb36dafb4fa8e0c09e56dd3dd6fbecd0c1f38c84e2bc70e0e9f78c4abfca2ea95b68b7a97878c2b8eb_640.png" },
-      { ref: skyImageRef, src: "https://pixabay.com/get/g62e19f9c9f6f3ebf06f26c1caa1f0c50aaef8c7204b9a444de12f5dc2bfa6d53ab879b5b7e6cd3ff77a9e7f07cb9cb70_640.jpg" },
-      { ref: groundImageRef, src: "https://pixabay.com/get/g69af580b1bce583bbe10d6d8a7c45bcafbc3c7d40fb9c9b0fe2e6e3da32f1303fe96bec2fde8a9a2caa3a6d8eeee3f83_640.jpg" },
-      { ref: pipeTopImageRef, src: "https://burst.shopifycdn.com/photos/green-plant-in-small-pot.jpg?width=1000&format=pjpg&exif=0&iptc=0" },
-      { ref: pipeBottomImageRef, src: "https://burst.shopifycdn.com/photos/green-plant-in-small-pot.jpg?width=1000&format=pjpg&exif=0&iptc=0" }
+      { 
+        ref: catImageRef, 
+        src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAADkUlEQVR4nO2ZW4hNURjHf2OSeM6QcnmQa3J5kEuaSB7kWV7kUiTlUnjgwYMylJJLSJFLKbk8oCR5oEjKgzxILg9ILpnJbUzGZfytz65jOs45e5+z9tlnNvOrv87MXv/vW9+31lrfWnuDgoKCggqlCtgEdALdQIswfm8Hnge6gI3AdD8bdRJoBxJZogM44Uej7gMfsmiM6p50s1GVwEfNRvQAu4FaYKLwu/z2TR6jepRz0xfUAkPACNCYY9w64KeMfZbLBOuAT/KkD+UZP0M03aJ+rRPGtctT3m1i7nQZ2yPqdcYMwKwFXgvxWxNzb8rYLlHXGDMAswT4IGRrTcxtlLH9oq40ZgBmLvBWyNabmLtAxo6IutSYAZiZwGshe2hibiL0z0VdN2XMAMx04KWQHTMxd0zGfhV1pTEDogfyCXgCDPMXw3Qr/xD1HNgA9AFfgUtAhYm5Y2kfsBI4KQPvAVvlFjsGrACOAHdkfIL+S02FrgT4IY2aBbSJ7wfQCLQCdUAjcAu4CrSEwk+/mEzXU6XaVlG/AwaK7kSZaKsQf5bfU2IEOCfq6jx5p1pyVD+wppgOlJNmAW+E/GkOkd8S4W0R9TtgfrGMl5sagX9C/iwHydZI1qbUG0SbnNWoQcJDogWpD71F9O9C5K9FbU3Y9VYRj5M2Ac9Ed75AutkhsYPkkOWGG3LAfwPrCyBdJOpm0X8JRNmsdH8G+JnFkGHghKgXiqFm6a+YWuOErcBPITxbyLWWBUuBr0J6IqJdsFh5ogpY7TE/jVbpsX9A7RcJsN6JVG94QwzNT0M0+BqlXMGCYEvNKp+D7WLkmYfkxuC70bX2lrphrYGjHxjTYGW6YEBkxKpA26Xu2E35PUqZyRjQ7CLZPuCbhjENVqYroJwrTuUVTcAXDUParEwXzBPPm/OKWRqH3AYrUzRJ75bKK5bKLaRDm8F0TXDW+NbKK6py1GIjBtM1wQPg+3/oFPDdY/JmGbJbZLO0c9R4GYgmF1KnJJuVwOQaXy51WHI6VcCwFxkcPgdlxmB5brsrL/Mc+6cM4MpSN+xz8GSJyPp8GsC1QWP43p1/SBxnZpyQGW7TCeFsZnOciENnrk2IQ2euTYhT8e7YhDj1io5NiFO779iE/yGrVpBSrTY6NsFp9W4wXRPUtrgXeJQZ1rKcvUQs8KfMZytwLTQgoaCgoKAgzvgNC9lPkL8FNq8AAAAASUVORK5CYII=" 
+      },
+      { 
+        ref: skyImageRef, 
+        src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAMAAABrrFhUAAAAnFBMVEUAre////8Aqe4Ap+4Ape0Ao+35/f7t+P0Asu8ArO/0+/72/P7w+f3q9/3g8/rX7/vR7PrG6PnA5fi04/ex4Pap3fakrejD5/mt3/al2/aj2fai2PWh1/Sd1fOc1POb0/OZ0vKY0fKW0PKU0PKUz/KTzvKSzfKQzPKOy/GNyvGMyfGLyPGKx/GJxvGIxfGHxPGGw/GHwvGEwfCDwPCC61LGAAAEM0lEQVR4Ae3aXXOiMBQG4AOCEQFW1irqWnVrl7rdbnv//5+7M+1Mp9NYSHLic5/rtN5NePMBQcQYY4wxxhhjjDHGGGOMMcYYY4wxxlqtM5ksZ7PldNLJ7/v6epOmaWM6Gnjbm0S95S5NU+k/pN00XPdbHnIYzSPxPc3G3vomlePdnxgecu6vxEnHnlcm6hzcCX5zOMcucuEFxnLkywTh1mE9hUYb3fv+aMw9zPNOWr2vsXsP00zHHu439mCWXs/VF/TuHIyS/j3c78XAJBrqC3qp5SdASV2/t9x7MIbc+noBzDyYQm713/9Pvf6/nEB69gAQm+RqAw+mEJnuDxA7D6aQA90fIN56MIXMtAGMYq0LQHmwV+KoC+CPMC8GlcSGApDZpWX5MDEGlYcFgXUHj+hn3yqS7nP0GzVH2vUk4vI3VQyEsO4MOMV/8OdxBSPPQIr/5OsaiDtgAZRQ1gCw9yoQCHABdFkDlS/NLYAaa+BHfgBzBuayAGBkAdTKS/NbCuQxmCXAwQKotT4AZA3ANAa3BDhZADXWx4CyBmDOgDKERRYAzGVg7g7oLOEdYJbh3gEgA7MYhOkQUJeQDgFzCeoQMJeQDgFTCewQMJWwDgFTCZsD5hLYIWAqgR0C5hLWIWAuYR0Cphq4BDhT0CQGlRtgDoA5A2opwB1gzoBaCuQxmCVAHoNZAuQxmCVA3gHmDKilgD0DzBlwTQHsGWDOgHsKYO8AcwbUUiDvAHMGXFMA+wwwZ8A1BfAy8CjQDhFbvAFE/zT6ZwG/S0jvAacUwMvAb+I9oFl+q9jGKUBQA5Wv21YOguoF9gAotgSqGELaEjKXACeD9gRNJcjJgD0BYwl0MiCPQXMJdDJgldDJsNNvid/8QjoBsBT/2zqDCSRED4A1BH5LAcwzgFkCnQGygh/rCrwjCJdAX8fWw+D3FEgFfBHD7ynwLeBbCnxPgVzADYL8mLQEfk+BjYCrx8AlBc58Abf1+HJo13vXuxveCbhDwUWZTVN8D7xYhfBvCqxK+KYCK/EnBXLxNwVKcSsFpPhUk/1KdRBuXgY3UmArvl2cqS2v1PK7S11xOwVUCRWXlHPYnQJd8eNqVe0/hfUpcBLFZbXaOQbLU2BY3LowN4XdKbARxcXNmtJ+IcNmn4pL0sJyJfP8FEjEjSeA2mNk9eF/EPV+CWQJ8NNJPPwSMHUPoP4xQP0CUH0XQP1FIPUrgPpXQdW/DKb+dVD1GwHUbwVRvxlI/XYw9RvC1G8J/BPawtRvC1S/MVT91lD1m4PVbw9Xf0Cg+iMi1R8Sqv6YWPUHBas/Klr9YeHqj4tXf2CA+iMj1B8aov7YGPUHBzVwdLS3w9O1/OcHR6s/Pl6aeMFAYIwxxhhjjDHGGGOMMcYYY4wxxhhjrAX+Akg7FHvDYrX6AAAAAElFTkSuQmCC" 
+      },
+      { 
+        ref: groundImageRef, 
+        src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAABABAMAAAAHc7SNAAAAD1BMVEUAAAB/f39fX18/Pz8fHx/eNmZiAAAABXRSTlMAYECA/5ApOlgAAABYSURBVHja7dYxDQAgDABBEAuIwQJC8G8N7wqY5E1d6Mqampqampqampqamvpn/Vi+AdTU1NTU1NTU1NTUf9YAANDU1NTU1NTU1NTU1NTU1NTU1NTU1NS3Ogd0bQ12fHYqVAAAAABJRU5ErkJggg==" 
+      },
+      { 
+        ref: pipeTopImageRef, 
+        src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAGQCAMAAADp6WTsAAAAYFBMVEUAAABGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUbbCzJJAAAAIHRSTlMAECAwQFBgcHuEj5Cfn6+vv7/Pz8/f3+Pj7+/v7+/vWdOXUwQAAADzSURBVHja7dZJDoMwEEXRsJgCATKPGfr+tyyVhRcgYUvVKd7/VvYDVzMzMzMzMzMzM7N4G6vMqqLx6FgV0noULQvSeSStCBJ6lCwJUnkUTAsSeJTPCdJ4FE4JUh/PGzgCj877E4QefTlB6NGXE2QefRNCFB4N3UDm0TMcJB7940Hg0T8exB3940Ha0T8eRB3940HQ0T8exBz940HI0T8eJBz940G+0T8e5Br940Gm0T8c5PAonxbk8CidFmT3KJ8XZPGomBhkeVRMDTJ7PZ0apK86qbw6+Wlj28rqYOYbH+bvZf5y/g/k/4n8z8TMzMzMzMzMzOwLC3oucnzjH2EAAAAASUVORK5CYII=" 
+      },
+      { 
+        ref: pipeBottomImageRef, 
+        src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAGQCAMAAADp6WTsAAAAYFBMVEUAAABGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUZGxUbbCzJJAAAAIHRSTlMAECAwQFBgcHuEj5Cfn6+vv7/Pz8/f3+Pj7+/v7+/vWdOXUwQAAADzSURBVHja7dZJDoMwEEXRsJgCATKPGfr+tyyVhRcgYUvVKd7/VvYDVzMzMzMzMzMzM7N4G6vMqqLx6FgV0noULQvSeSStCBJ6lCwJUnkUTAsSeJTPCdJ4FE4JUh/PGzgCj877E4QefTlB6NGXE2QefRNCFB4N3UDm0TMcJB7940Hg0T8exB3940Ha0T8eRB3940HQ0T8exBz940HI0T8eJBz940G+0T8e5Br940Gm0T8c5PAonxbk8CidFmT3KJ8XZPGomBhkeVRMDTJ7PZ0apK86qbw6+Wlj28rqYOYbH+bvZf5y/g/k/4n8z8TMzMzMzMzMzOwLC3oucnzjH2EAAAAASUVORK5CYII=" 
+      }
     ];
     
     let loadedCount = 0;
@@ -76,9 +91,9 @@ const MainFeature = () => {
       
       // Add error event listener
       img.ref.current.onerror = () => {
-        console.error(`Failed to load image: ${img.src}`);
+        console.error(`Failed to load image: ${img.src.substring(0, 30)}...`);
         setLoadingError(true);
-      };
+
       
       // Set src after adding event listeners
       img.ref.current.src = img.src;
@@ -108,12 +123,13 @@ const MainFeature = () => {
       // If images aren't loaded yet, show loading screen
       if (!imagesLoaded) {
         drawLoadingScreen(ctx, canvas);
-        animationFrameId = requestAnimationFrame(render);
-        return;
+        if (!loadingError) {
+          animationFrameId = requestAnimationFrame(render);
+          return;
+        }
       }
       
       // Draw background
-      if (skyImageRef.current && skyImageRef.current.complete && skyImageRef.current.naturalHeight !== 0) {
         ctx.drawImage(skyImageRef.current, 0, 0, canvas.width, canvas.height);
       }
       
@@ -175,16 +191,15 @@ const MainFeature = () => {
       if (groundImageRef.current && groundImageRef.current.complete && groundImageRef.current.naturalHeight !== 0) {
         ctx.drawImage(groundImageRef.current, 0, canvas.height - 80, canvas.width, 80);
       }
-      ctx.drawImage(groundImageRef.current, 0, canvas.height - 80, canvas.width, 80);
       
       // Draw pipes
-        // Only draw if images are properly loaded
+      // Only draw if images are properly loaded
       pipes.forEach(pipe => {
         if (pipeTopImageRef.current && pipeTopImageRef.current.complete && pipeTopImageRef.current.naturalHeight !== 0 &&
             pipeBottomImageRef.current && pipeBottomImageRef.current.complete && pipeBottomImageRef.current.naturalHeight !== 0) {
           // Draw top pipe (flipped)
           ctx.save();
-          ctx.translate(pipe.x + PIPE_WIDTH / 2, pipe.topHeight);
+          ctx.translate(pipe.x + PIPE_WIDTH / 2, pipe.topHeight / 2);
           ctx.scale(1, -1);
           ctx.drawImage(pipeTopImageRef.current, -PIPE_WIDTH / 2, 0, PIPE_WIDTH, 320);
           ctx.restore();
@@ -192,7 +207,7 @@ const MainFeature = () => {
           // Draw bottom pipe
           ctx.drawImage(pipeBottomImageRef.current, pipe.x, pipe.topHeight + PIPE_GAP, PIPE_WIDTH, canvas.height - pipe.topHeight - PIPE_GAP);
         }
-      
+        
       });
       
       if (catImageRef.current && catImageRef.current.complete && catImageRef.current.naturalHeight !== 0) {
@@ -206,7 +221,6 @@ const MainFeature = () => {
         ctx.drawImage(catImageRef.current, -CAT_WIDTH / 2, -CAT_HEIGHT / 2, CAT_WIDTH, CAT_HEIGHT);
         ctx.restore();
       }
-      ctx.restore();
       
       // Draw score
       ctx.fillStyle = 'white';
@@ -246,7 +260,7 @@ const MainFeature = () => {
     ctx.lineWidth = 5;
     ctx.font = '20px "Press Start 2P"';
     ctx.textAlign = 'center';
-    ctx.fillText(loadingError ? "Error loading images!" : "Loading...", canvas.width / 2, canvas.height / 2);
+    ctx.strokeText(loadingError ? "Error loading game assets!" : "Loading...", canvas.width / 2, canvas.height / 2);
   };
   
   const checkCollisions = () => {
@@ -345,7 +359,7 @@ const MainFeature = () => {
   const startGame = () => {
     if (!imagesLoaded) {
       return; // Don't start game if images aren't loaded
-    }
+    }  
     
     setGameState({
       isActive: true,
@@ -448,14 +462,14 @@ const MainFeature = () => {
       
       {/* Game Canvas */}
       <div className="game-container aspect-[16/9] overflow-hidden shadow-lg mb-4 mx-auto">
-        {!imagesLoaded && (
+        {!imagesLoaded && !loadingError && (
           <div className="absolute inset-0 flex items-center justify-center bg-surface-800/50 z-10">
             <div className="text-center p-4 bg-surface-100 dark:bg-surface-700 rounded-lg shadow-lg">
               <div className="animate-spin h-10 w-10 border-4 border-accent border-t-transparent rounded-full mb-4 mx-auto"></div>
               <p className="font-game text-surface-800 dark:text-surface-200">
-                {loadingError ? "Error loading game assets!" : "Loading game..."}
+                Loading game...
               </p>
-            </div>
+              </div>
           </div>
         )}
         <canvas
