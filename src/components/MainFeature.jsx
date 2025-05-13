@@ -210,11 +210,12 @@ const MainFeature = () => {
           groundImageRef.current.naturalHeight !== 0 && 
           !groundImageRef.current.error) {
         try {
-        ctx.drawImage(groundImageRef.current, 0, canvas.height - 80, canvas.width, 80);
+          ctx.drawImage(groundImageRef.current, 0, canvas.height - 80, canvas.width, 80);
+        } catch (err) {
+          console.error("Error drawing ground:", err);
+        }
       }
       
-      // Draw pipes
-      // Only draw if images are properly loaded
       pipes.forEach(pipe => {
         if (pipeTopImageRef.current && pipeTopImageRef.current.complete && pipeTopImageRef.current.naturalHeight !== 0 &&
             !pipeTopImageRef.current.error &&
@@ -234,9 +235,6 @@ const MainFeature = () => {
         }
         
       });
-      } catch (err) {
-        console.error("Error drawing game elements:", err);
-      }
       
       if (catImageRef.current && 
           catImageRef.current.complete && 
@@ -312,6 +310,10 @@ const MainFeature = () => {
     ctx.font = '20px "Press Start 2P"';
     ctx.textAlign = 'center';
     ctx.strokeText(loadingError ? "Error loading game assets!" : "Loading...", canvas.width / 2, canvas.height / 2);
+    ctx.fillText(loadingError ? "Error loading game assets!" : "Loading...", canvas.width / 2, canvas.height / 2);
+    } catch (err) {
+      console.error("Error rendering loading text:", err);
+    }
   };
   
   const checkCollisions = () => {
