@@ -92,7 +92,19 @@ const MainFeature = () => {
       // Add error event listener
       img.ref.current.onerror = () => {
         console.error(`Failed to load image: ${img.src.substring(0, 30)}...`);
+        loadedCount++;
         setLoadingError(true);
+        
+        // Create a small placeholder image to avoid errors when trying to draw
+        const canvas = document.createElement('canvas');
+        canvas.width = 50;
+        canvas.height = 50;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'pink'; // Cat color as fallback
+        ctx.fillRect(0, 0, 50, 50);
+        ctx.fillStyle = 'black';
+        ctx.fillText('!', 25, 25); // Error indicator
+        img.ref.current.src = canvas.toDataURL();
       };
       
       // Set src after adding event listeners
@@ -130,8 +142,13 @@ const MainFeature = () => {
       }
       
       // Draw background
+      if (skyImageRef.current && 
+          skyImageRef.current.complete && 
+          skyImageRef.current.naturalHeight !== 0 && 
+          !skyImageRef.current.error) {
         ctx.drawImage(skyImageRef.current, 0, 0, canvas.width, canvas.height);
-      
+      }
+
       
       // Only update game if it's active and not paused
       if (gameState.isActive && !gameState.isPaused && !gameState.isOver) {
@@ -188,7 +205,11 @@ const MainFeature = () => {
       }
       // Only draw if image is properly loaded
       
-      if (groundImageRef.current && groundImageRef.current.complete && groundImageRef.current.naturalHeight !== 0) {
+      if (groundImageRef.current && 
+          groundImageRef.current.complete && 
+          groundImageRef.current.naturalHeight !== 0 && 
+          !groundImageRef.current.error) {
+        try {
         ctx.drawImage(groundImageRef.current, 0, canvas.height - 80, canvas.width, 80);
       }
       
@@ -196,7 +217,11 @@ const MainFeature = () => {
       // Only draw if images are properly loaded
       pipes.forEach(pipe => {
         if (pipeTopImageRef.current && pipeTopImageRef.current.complete && pipeTopImageRef.current.naturalHeight !== 0 &&
-            pipeBottomImageRef.current && pipeBottomImageRef.current.complete && pipeBottomImageRef.current.naturalHeight !== 0) {
+            !pipeTopImageRef.current.error &&
+            pipeBottomImageRef.current && 
+            pipeBottomImageRef.current.complete && 
+            pipeBottomImageRef.current.naturalHeight !== 0 && 
+            !pipeBottomImageRef.current.error) {
           // Draw top pipe (flipped)
           ctx.save();
           ctx.translate(pipe.x + PIPE_WIDTH / 2, pipe.topHeight / 2);
@@ -209,10 +234,17 @@ const MainFeature = () => {
         }
         
       });
+      } catch (err) {
+        console.error("Error drawing game elements:", err);
+      }
       
-      if (catImageRef.current && catImageRef.current.complete && catImageRef.current.naturalHeight !== 0) {
+      if (catImageRef.current && 
+          catImageRef.current.complete && 
+          catImageRef.current.naturalHeight !== 0 && 
+          !catImageRef.current.error) {
+        try {
         ctx.save();
-        ctx.translate(100, cat.y);
+        ctx.translate(100, Math.min(Math.max(cat.y, CAT_HEIGHT/2), canvas.height - 80 - CAT_HEIGHT/2));
         
         // Rotate cat based on velocity
         const rotation = Math.min(Math.max(cat.velocity * 0.08, -0.5), 0.5);
@@ -220,11 +252,16 @@ const MainFeature = () => {
         
         ctx.drawImage(catImageRef.current, -CAT_WIDTH / 2, -CAT_HEIGHT / 2, CAT_WIDTH, CAT_HEIGHT);
         ctx.restore();
+        } catch (err) {
+          console.error("Error drawing cat:", err);
+        }
       }
       
       // Draw score
       ctx.fillStyle = 'white';
       ctx.strokeStyle = 'black';
+      ctx.save();
+      try {
       ctx.lineWidth = 5;
       ctx.font = '30px "Press Start 2P"';
       ctx.textAlign = 'center';
@@ -232,10 +269,18 @@ const MainFeature = () => {
       ctx.fillText(gameState.score.toString(), canvas.width / 2, 50);
       
       // Draw lives
-      if (catImageRef.current && catImageRef.current.complete && catImageRef.current.naturalHeight !== 0) {
+      if (catImageRef.current && 
+          catImageRef.current.complete && 
+          catImageRef.current.naturalHeight !== 0 && 
+          !catImageRef.current.error) {
         for (let i = 0; i < livesLeft; i++) {
-          ctx.drawImage(catImageRef.current, 20 + i * 30, 20, 25, 20);
+          try {
+            ctx.drawImage(catImageRef.current, 20 + i * 30, 20, 25, 20);
+          } catch (err) {
+            console.error("Error drawing lives:", err);
+          }
         }
+      }
       }
       
       animationFrameId = requestAnimationFrame(render);
@@ -254,10 +299,16 @@ const MainFeature = () => {
     ctx.fillStyle = '#87CEEB'; // Sky blue
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    try {
     // Draw loading text
     ctx.fillStyle = 'white';
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
+    } catch (err) {
+      console.error("Error setting up loading screen:", err);
+    }
+    
+    try {
     ctx.font = '20px "Press Start 2P"';
     ctx.textAlign = 'center';
     ctx.strokeText(loadingError ? "Error loading game assets!" : "Loading...", canvas.width / 2, canvas.height / 2);
@@ -325,6 +376,7 @@ const MainFeature = () => {
           ...prev,
           isOver: true,
           highScore: newHighScore
+        }
         };
       });
       
@@ -433,6 +485,7 @@ const MainFeature = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState.isPaused, gameState.isOver, gameState.isActive]);
   
   return (
